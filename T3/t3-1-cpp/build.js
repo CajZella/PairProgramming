@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 
 function mancala_board(flag, seq, size) {
-    const wasmSource = new Uint8Array(readFileSync("./mancala_board.wasm"));
+    const wasmSource = new Uint8Array(readFileSync("./t3-1-cpp/mancala_board.wasm"));
     const wasmModule = new WebAssembly.Module(wasmSource);
 
     const wasmInstance = new WebAssembly.Instance(wasmModule, {

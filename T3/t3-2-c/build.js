@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 
 function mancala_operator(flag, status) {
-    const wasmSource = new Uint8Array(readFileSync("./mancala_operator.wasm"));
+    const wasmSource = new Uint8Array(readFileSync("./t3-2-c/mancala_operator.wasm"));
     const wasmModule = new WebAssembly.Module(wasmSource);
 
     const wasmInstance = new WebAssembly.Instance(wasmModule, {
@@ -23,8 +23,9 @@ function mancala_operator(flag, status) {
     });
 
     // 调用导出的函数
-    const ret = mancala_operator(flag, status);
+    const ret = mancala_operator(flag, c_array);
     free(c_array)
+    console.log(ret)
     return ret
 }
 

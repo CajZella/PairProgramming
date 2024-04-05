@@ -12,6 +12,8 @@ double dfs(int* next_move_ptr, int flag, int op, int *status, int depth, int ini
     double weights[4] = {0.4, 0.3, 0.3};
     int status_cpy[14];
     int depths = 8;
+    (*next_move_ptr)++;
+    //return *next_move_ptr;
     memcpy(status_cpy, status, sizeof(status_cpy));
     double res = op == 0 ? -1e9 : 1e9;
     for (int i = 0; i < 6; i++) {
@@ -68,10 +70,14 @@ double dfs(int* next_move_ptr, int flag, int op, int *status, int depth, int ini
 }
 
 int mancala_operator(int flag, int *status) {
-    int next_move = -1;
+    /*int* next_move = malloc(sizeof(int));
+    *next_move = 0;
+    dfs(next_move ,flag, flag == 1 ? 0 : 1, status, 0, status[6], status[13], flag == 1 ? -1e9 : 1e9);
+    return flag * 10 + (*next_move) + 1;*/
+    int next_move = 0;
     dfs(&next_move ,flag, flag == 1 ? 0 : 1, status, 0, status[6], status[13], flag == 1 ? -1e9 : 1e9);
-    return flag * 10 + next_move + 1;
-}
+    return flag * 10 + (next_move) + 1;
+}a
 
 void *self_malloc(int len)
 {

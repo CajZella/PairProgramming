@@ -74,6 +74,7 @@ do {
         operationSequence.push(operation);
         boardReturn = board(2, operationSequence, operationSequence.length);
     }
+    console.log(boardReturn[14])
     if (boardReturn[14] == 1) {
         operator = 1;
         status = boardReturn.slice(0,14);
