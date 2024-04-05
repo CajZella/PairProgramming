@@ -54,7 +54,8 @@ int* mancala_board(int flag, int* seq, int size) {
             cnt[14] = 200 + 2 * cnt[6] - 48;
         else
             cnt[14] = 200 + 48 - 2 * cnt[13];
-    }
+    } else
+        cnt[14] = cur_player;
     return cnt;
 }
 
