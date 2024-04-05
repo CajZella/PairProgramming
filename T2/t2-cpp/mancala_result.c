@@ -25,7 +25,7 @@ int mancala_result(int flag, int *seq, int size)
             cnt[pos]++;
             stones--;
         }
-        if (cnt[pos] == 1 && cnt[14 - pos] > 0)
+        if (cnt[pos] == 1 && cnt[14 - pos] > 0  && ((pos >= 1 && pos <= 6 && player == 1) || (pos >= 8 && pos <= 13 && player == 2)))
         {
             cnt[score_pos] += cnt[14 - pos] + 1;
             cnt[14 - pos] = cnt[pos] = 0;
@@ -51,7 +51,7 @@ int mancala_result(int flag, int *seq, int size)
         else
             cur_player = 3 - player;
     }
-    if (end < size - 1) // game end but not end
+    if (end && end < size - 1) // game end but not end
         return 30000 + end + 1;
     if (end) // game end
         return 15000 + cnt[7 * flag] - cnt[7 * (3 - flag)];
