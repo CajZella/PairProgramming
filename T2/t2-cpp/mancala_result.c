@@ -25,7 +25,8 @@ int mancala_result(int flag, int *seq, int size)
             cnt[pos]++;
             stones--;
         }
-        if (cnt[pos] == 1 && cnt[14 - pos] > 0  && ((pos >= 1 && pos <= 6 && player == 1) || (pos >= 8 && pos <= 13 && player == 2)))
+        if (cnt[pos] == 1 && cnt[14 - pos] > 0
+        && ((pos >= 1 && pos <= 6 && player == 1) || (pos >= 8 && pos <= 13 && player == 2)))
         {
             cnt[score_pos] += cnt[14 - pos] + 1;
             cnt[14 - pos] = cnt[pos] = 0;
