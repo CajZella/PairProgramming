@@ -7,15 +7,15 @@
 #include <stdlib.h>
 
 double weights[4] = {0.4, 0.3, 0.3};
-int depths = 8, next_move = 0;
+int depths = 2, next_move = 0;
 double dfs(int flag, int op, int *status, int depth, int init_score1, int init_score2, double fa) { // flag: 1 for player 1, 2 for player 2
     // op = 0: max, op = 1: min
+    int status_cpy[14];
+    memcpy(status_cpy, status, sizeof(status_cpy));
     double res = op == 0 ? -1e9 : 1e9;
     for (int i = 0; i < 6; i++) {
         int pos = flag == 1 ? i : i + 7;
         if (status[pos] == 0) continue;
-        int status_cpy[14];
-        memcpy(status_cpy, status, sizeof(status_cpy));
         int stones = status[pos]; status[pos] = 0;
         while (stones > 0) {
             pos = (pos + 1) % 14;
@@ -24,7 +24,7 @@ double dfs(int flag, int op, int *status, int depth, int init_score1, int init_s
         }
         if (depth + 1 == depths) {
             // calculate the features
-            int features[4];
+            double features[4];
             int sum1 = 0, sum2 = 0, sum1_ = 0;
             for (int j = 0; j <= 6; j++) {
                 sum1 += status[j];
@@ -40,23 +40,27 @@ double dfs(int flag, int op, int *status, int depth, int init_score1, int init_s
                 features[j] = exp(features[j]), sum += features[j];
             for (int j = 0; j < 3; j++)
                 features[j] /= sum, target += features[j] * weights[j];
-            if (op == 0)
+            if (op == 0) {
                 res = res > target ? res : target;
-            else
+                if (res >= fa) return res;
+            } else {
                 res = res < target ? res : target;
+                if (res <= fa) return res;
+            }
+            memcpy(status, status_cpy, sizeof(status_cpy));
             continue;
         }
         int nextFlag = (pos == 6 && flag == 1 || pos == 13 && flag == 2) ? flag : 3 - flag;
         if (op == 1) {
             double t = dfs(nextFlag, 0, status, depth + 1, init_score1, init_score2, res);
             memcpy(status, status_cpy, sizeof(status_cpy));
-            if (res <= fa) break;
             if (res > t) res = t, next_move = i;
+            if (res <= fa) break;
         } else {
             double t = dfs(nextFlag, 1, status, depth + 1, init_score1, init_score2, res);
             memcpy(status, status_cpy, sizeof(status_cpy));
-            if (res >= fa) break;
             if (res < t) res = t, next_move = i;
+            if (res >= fa) break;
         }
     }
     return res;
