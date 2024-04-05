@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 
 double weights[4] = {0.4, 0.3, 0.3};
 int depths = 8, next_move = 0;
@@ -60,12 +61,18 @@ double dfs(int flag, int op, int *status, int depth, int init_score1, int init_s
     }
     return res;
 }
+
 int mancala_operator(int flag, int *status) {
     dfs(flag, flag == 1 ? 0 : 1, status, 0, status[6], status[13], flag == 1 ? -1e9 : 1e9);
     return flag * 10 + next_move + 1;
 }
-int main() {
-    int status[14] = {4,4,4,4,4,4,0,4,4,4,4,4,4,0};
-    printf("%d\n", mancala_operator(2, status));
-    return 0;
+
+void *self_malloc(int len)
+{
+    return (void *)malloc(len * sizeof(int));
+}
+
+void self_free(int *ptr)
+{
+    free(ptr);
 }

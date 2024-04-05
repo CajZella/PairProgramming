@@ -1,7 +1,7 @@
 import assert from "assert";
 
 // Choose proper "import" depending on your PL.
-import { mancalaOperator as op1 } from "./t3-2-as/build/release.js";
+import { mancala_operator as op1 } from "./t3-2-as/build.js";
 // import { mancala_operator as op1 } from "./t3_2_rust/pkg/t3_2_rust.js"
 // [Write your own "import" for other PLs.]
 
