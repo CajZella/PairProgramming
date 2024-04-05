@@ -6,11 +6,12 @@
 #include <math.h>
 #include <stdlib.h>
 
-double weights[4] = {0.4, 0.3, 0.3};
-int depths = 2, next_move = 0;
-double dfs(int flag, int op, int *status, int depth, int init_score1, int init_score2, double fa) { // flag: 1 for player 1, 2 for player 2
+
+double dfs(int* next_move_ptr, int flag, int op, int *status, int depth, int init_score1, int init_score2, double fa) { // flag: 1 for player 1, 2 for player 2
     // op = 0: max, op = 1: min
+    double weights[4] = {0.4, 0.3, 0.3};
     int status_cpy[14];
+    int depths = 8;
     memcpy(status_cpy, status, sizeof(status_cpy));
     double res = op == 0 ? -1e9 : 1e9;
     for (int i = 0; i < 6; i++) {
@@ -52,14 +53,14 @@ double dfs(int flag, int op, int *status, int depth, int init_score1, int init_s
         }
         int nextFlag = (pos == 6 && flag == 1 || pos == 13 && flag == 2) ? flag : 3 - flag;
         if (op == 1) {
-            double t = dfs(nextFlag, 0, status, depth + 1, init_score1, init_score2, res);
+            double t = dfs(next_move_ptr,nextFlag, 0, status, depth + 1, init_score1, init_score2, res);
             memcpy(status, status_cpy, sizeof(status_cpy));
-            if (res > t) res = t, next_move = i;
+            if (res > t) res = t, *next_move_ptr = i;
             if (res <= fa) break;
         } else {
-            double t = dfs(nextFlag, 1, status, depth + 1, init_score1, init_score2, res);
+            double t = dfs(next_move_ptr, nextFlag, 1, status, depth + 1, init_score1, init_score2, res);
             memcpy(status, status_cpy, sizeof(status_cpy));
-            if (res < t) res = t, next_move = i;
+            if (res < t) res = t, *next_move_ptr = i;
             if (res >= fa) break;
         }
     }
@@ -67,7 +68,8 @@ double dfs(int flag, int op, int *status, int depth, int init_score1, int init_s
 }
 
 int mancala_operator(int flag, int *status) {
-    dfs(flag, flag == 1 ? 0 : 1, status, 0, status[6], status[13], flag == 1 ? -1e9 : 1e9);
+    int next_move = -1;
+    dfs(&next_move ,flag, flag == 1 ? 0 : 1, status, 0, status[6], status[13], flag == 1 ? -1e9 : 1e9);
     return flag * 10 + next_move + 1;
 }
 
