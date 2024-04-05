@@ -1,8 +1,7 @@
 //
 // Created by Michelle on 2024-04-05.
 //
-#include<iostream>
-using namespace std;
+#include<stdlib.h>
 
 int* mancala_board(int flag, int* seq, int size) {
     int* cnt = (int*)malloc(15 * sizeof(int));
@@ -58,15 +57,13 @@ int* mancala_board(int flag, int* seq, int size) {
     }
     return cnt;
 }
-int main() {
-    int flag, seq[100], size;
-    cin >> flag >> size;
-    for (int i = 0; i < size; i++)
-        cin >> seq[i];
-    int* cnt = mancala_board(flag, seq, size);
-    for (int i = 0; i < 15; i++)
-        cout << cnt[i] << " ";
-    cout << endl;
-    free(cnt);
-    return 0;
+
+void *self_malloc(int len)
+{
+    return (void *)malloc(len * sizeof(int));
+}
+
+void self_free(int *ptr)
+{
+    free(ptr);
 }
