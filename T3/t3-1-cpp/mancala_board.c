@@ -7,7 +7,7 @@ int* mancala_board(int flag, int* seq, int size) {
     int* cnt = (int*)malloc(15 * sizeof(int));
     for (int i = 0; i < 15; i++)
         cnt[i] = (i == 6 || i == 13 || i == 14) ? 0 : 4;
-    int cur_player, end = 0;
+    int cur_player = seq[0] / 10, end = 0;
     for (int i = 0; i < size; i++) {
         int player = seq[i] / 10, pos = (player == 1) ? seq[i] % 10 - 1 : seq[i] % 10 + 6, score_pos = player == 1 ? 6 : 13;
         if (i == size - 1)
@@ -23,7 +23,8 @@ int* mancala_board(int flag, int* seq, int size) {
             cnt[pos]++;
             stones--;
         }
-        if (cnt[pos] == 1 && cnt[12 - pos] > 0  && pos != 6 && pos != 13) {
+        if (cnt[pos] == 1 && cnt[12 - pos] > 0  && pos != 6 && pos != 13
+            && ((pos >= 0 && pos <= 5 && player == 1) || (pos >= 7 && pos <= 12 && player == 2))) {
             cnt[score_pos] += cnt[12 - pos] + 1;
             cnt[12 - pos] = cnt[pos] = 0;
         }
@@ -59,8 +60,7 @@ int* mancala_board(int flag, int* seq, int size) {
     return cnt;
 }
 
-void *self_malloc(int len)
-{
+void *self_malloc(int len) {
     return (void *)malloc(len * sizeof(int));
 }
 

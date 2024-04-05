@@ -6,4 +6,4 @@ import assert from "assert";
 // [Write your own "import" for other PLs.]
 import { mancala_board } from "./build.js"
 
-console.log(mancala_board(2, [11, 23], 2))
+console.log(mancala_board(1, [11], 1))

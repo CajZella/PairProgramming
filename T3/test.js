@@ -11,7 +11,10 @@ import { mancalaOperator as op2 } from "./t3-2-cpp-rival/t3_2_cpp.js";
 // [Write your own "import" for other PLs.]
 
 // Choose proper "import" depending on your PL.
-import { mancala_board as board } from "./t3-1-cpp/build.js";
+//import { mancala_board as board } from "./t3-1-cpp/build.js";
+
+
+import { mancalaBoard as board } from "./t3-1-other/release.js";
 // import { mancala_board as board } from "./t3_1_rust/pkg/t3_1_rust.js"
 // [Write your own "import" for other PLs.]
 
@@ -33,13 +36,22 @@ do {
         op1Time += performance.now() * 1000 - timeStamp;
         operationSequence.push(operation);
         boardReturn = board(1, operationSequence, operationSequence.length);
+        // console.log(1)
+        // console.log(operationSequence)
+        // console.log(operationSequence.length)
+        // console.log(boardReturn)
     } else {
         timeStamp = performance.now() * 1000;
         operation = op2(2, status);
         op2Time += performance.now() * 1000 - timeStamp;
         operationSequence.push(operation);
         boardReturn = board(2, operationSequence, operationSequence.length);
+        // console.log(2)
+        // console.log(operationSequence)
+        // console.log(operationSequence.length)
+        // console.log(boardReturn)
     }
+    //console.log(boardReturn[14])
     if (boardReturn[14] == 1) {
         operator = 1;
         status = boardReturn.slice(0,14);
@@ -74,7 +86,6 @@ do {
         operationSequence.push(operation);
         boardReturn = board(2, operationSequence, operationSequence.length);
     }
-    console.log(boardReturn[14])
     if (boardReturn[14] == 1) {
         operator = 1;
         status = boardReturn.slice(0,14);

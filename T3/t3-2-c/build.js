@@ -25,7 +25,7 @@ function mancala_operator(flag, status) {
     // 调用导出的函数
     const ret = mancala_operator(flag, c_array);
     free(c_array)
-    console.log(ret)
+    //console.log(ret)
     return ret
 }
 
