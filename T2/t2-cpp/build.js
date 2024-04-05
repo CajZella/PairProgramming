@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 
-function bocchi_shut_up(flag, seq, size) {
-    const wasmSource = new Uint8Array(readFileSync("./t1_cpp/t1.wasm"));
+function mancala_result(flag, seq, size) {
+    const wasmSource = new Uint8Array(readFileSync("./t2-cpp/mancala_result.wasm"));
     const wasmModule = new WebAssembly.Module(wasmSource);
 
     const wasmInstance = new WebAssembly.Instance(wasmModule, {
@@ -11,7 +11,7 @@ function bocchi_shut_up(flag, seq, size) {
 
     const heap = new Uint8Array(wasmInstance.exports.memory.buffer);
 
-    const bocchi_shut_up = wasmInstance.exports.bocchi_shut_up;
+    const mancala_result = wasmInstance.exports.mancala_result;
     //处理数组
     const malloc = wasmInstance.exports.self_malloc;
     const free = wasmInstance.exports.self_free;
@@ -23,9 +23,9 @@ function bocchi_shut_up(flag, seq, size) {
     });
 
     // 调用导出的函数
-    const ret = bocchi_shut_up(flag, c_array, size);
+    const ret = mancala_result(flag, c_array, size);
     free(c_array)
     return ret
 }
 
-export { bocchi_shut_up };
+export { mancala_result };

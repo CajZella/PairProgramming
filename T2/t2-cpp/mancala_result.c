@@ -57,3 +57,13 @@ int mancala_result(int flag, int *seq, int size)
         return 15000 + cnt[7 * flag] - cnt[7 * (3 - flag)];
     return 20000 + cnt[7 * flag]; // game not end
 }
+
+void *self_malloc(int len)
+{
+    return (void *)malloc(len * sizeof(int));
+}
+
+void self_free(int *ptr)
+{
+    free(ptr);
+}
