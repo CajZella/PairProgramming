@@ -9,8 +9,8 @@
 
 double dfs(int* next_move, int flag, int op, int *status, int depth, int init_score1, int init_score2, double fa) { // flag: 1 for player 1, 2 for player 2
     // op = 0: max, op = 1: min
-    double weights[4] = {0.7, 0.0, 0.2, 0.2};
-    int depths = 7;
+    double weights[4] = {0.8, 0.0, 0.2, 1.0};
+    int depths = 2;
     int status_cpy[14];
     memcpy(status_cpy, status, sizeof(status_cpy));
     double res = op == 0 ? -1e9 : 1e9;
@@ -38,7 +38,7 @@ double dfs(int* next_move, int flag, int op, int *status, int depth, int init_sc
             features[0] = status[6] - init_score1 - (status[13] - init_score2);
             features[1] = sum1 - sum2;
             features[2] = sum1_ - sum1 + status[6] - init_score1;
-            features[3] = next_flag == flag && flag == 1 ? 50 : (next_flag == flag && flag == 2 ? -50 : 0);
+            features[3] = next_flag == flag && flag == 1 ? 100 : (next_flag == flag && flag == 2 ? -100 : 0);
             // 归一化
             double sum = 0, target = 0;
             for (int j = 0; j < 4; j++)
