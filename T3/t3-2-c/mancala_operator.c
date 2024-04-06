@@ -10,7 +10,7 @@
 int next_move = -1;
 int *cur_status;
 int depths = 10;
-int weights[4] = {100, 10, 1};
+int weights[4] = {80, 10, 1};
 int check_skip(int player, int pos) {
     return pos == 6 && player == 2 || pos == 13 && player == 1;
 }
@@ -62,11 +62,14 @@ int calc_feature(int next_player, int *pre_status) { // 求 player1
         features -= weights[1] * max_taken_stones;
     }
     // 得失棋子数
-    int sum1 = 0, sum1_ = 0;
+    int sum1 = 0, sum1_ = 0, sum2 = 0;
     for (int j = 0; j < 6; j++) {
         sum1 += cur_status[j];
         sum1_ += pre_status[j];
+        sum2 += cur_status[j + 7];
     }
+    if (sum1 + sum2 < 20) weights[2] = 40;
+    else weights[2] = 1;
     features += weights[2] * (sum1 - sum1_ + cur_status[6] - pre_status[6]);
     return features;
 }
@@ -118,7 +121,24 @@ int dfs(int player, int op, int depth, int weight_by_father, int op_by_father) {
 }
 int mancala_operator(int flag, int *status) {
     cur_status = status;
-    dfs(flag, 1 - flag, 0, flag == 1 ? 1e9 : -1e9, flag);
+    int equal = 1, jumian1[14] = {4,4,4,4,4,4,0,4,4,4,4,4,4,0};
+    for (int i = 0; i < 14; i++)
+        if (status[i] != jumian1[i]) {
+            equal = 0;
+            break;
+        }
+    if (equal) next_move = 2;
+    else {
+        equal = 1;
+        int jumian2[14] = {4,4,0,5,5,5,1,4,4,4, 4,4,4,0};
+        for (int i = 0; i < 14; i++)
+            if (status[i] != jumian2[i]) {
+                equal = 0;
+                break;
+            }
+        if (equal) next_move = 5;
+        else dfs(flag, 1 - flag, 0, flag == 1 ? 1e9 : -1e9, flag);
+    }
     return flag * 10 + next_move + 1;
 }
 

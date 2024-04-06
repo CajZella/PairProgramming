@@ -11,10 +11,10 @@ import { mancalaOperator as op2 } from "./t3-2-cpp-lzh/release.js";
 // [Write your own "import" for other PLs.]
 
 // Choose proper "import" depending on your PL.
-//import { mancala_board as board } from "./t3-1-cpp/build.js";
+import { mancala_board as board } from "./t3-1-cpp/build.js";
 
 
-import { mancalaBoard as board } from "./t3-1-other/release.js";
+//import { mancalaBoard as board } from "./t3-1-other/release.js";
 // import { mancala_board as board } from "./t3_1_rust/pkg/t3_1_rust.js"
 // [Write your own "import" for other PLs.]
 

@@ -14,7 +14,7 @@ import { mancalaOperator as op2 } from "./t3-2-cpp-rival/t3_2_cpp.js";
 import { mancala_board as board } from "./t3-1-cpp/build.js";
 
 
-import { mancalaBoard} from "./t3-1-other/release.js";
+// import { mancalaBoard} from "./t3-1-other/release.js";
 // import { mancala_board as board } from "./t3_1_rust/pkg/t3_1_rust.js"
 // [Write your own "import" for other PLs.]
 
@@ -36,28 +36,12 @@ do {
         op1Time += performance.now() * 1000 - timeStamp;
         operationSequence.push(operation);
         boardReturn = board(1, operationSequence, operationSequence.length);
-        let boardReturn2 = mancalaBoard(1, operationSequence, operationSequence.length)
-        if(boardReturn2[14] != boardReturn[14]) {
-            // console.log(1)
-            // console.log(operationSequence)
-            // console.log(operationSequence.length)
-            // console.log(boardReturn)
-            // console.log(boardReturn2)
-        }
     } else {
         timeStamp = performance.now() * 1000;
         operation = op2(2, status);
         op2Time += performance.now() * 1000 - timeStamp;
         operationSequence.push(operation);
         boardReturn = board(2, operationSequence, operationSequence.length);
-        let boardReturn2 = mancalaBoard(2, operationSequence, operationSequence.length)
-        if(boardReturn2[14] != boardReturn[14]) {
-            // console.log(2)
-            // console.log(operationSequence)
-            // console.log(operationSequence.length)
-            // console.log(boardReturn)
-            // console.log(boardReturn2)
-        }
     }
     //console.log(boardReturn[14])
     if (boardReturn[14] == 1) {
@@ -87,28 +71,12 @@ do {
         op1Time += performance.now() * 1000 - timeStamp;
         operationSequence.push(operation);
         boardReturn = board(1, operationSequence, operationSequence.length);
-        let boardReturn2 = mancalaBoard(1, operationSequence, operationSequence.length)
-        if(boardReturn2[14] != boardReturn[14]) {
-            // console.log(1)
-            // console.log(operationSequence)
-            // console.log(operationSequence.length)
-            // console.log(boardReturn)
-            // console.log(boardReturn2)
-        }
     } else {
         timeStamp = performance.now() * 1000;
         operation = op2(2, status);
         op2Time += performance.now() * 1000 - timeStamp;
         operationSequence.push(operation);
         boardReturn = board(2, operationSequence, operationSequence.length);
-        let boardReturn2 = mancalaBoard(2, operationSequence, operationSequence.length)
-        if(boardReturn2[14] != boardReturn[14]) {
-            // console.log(2)
-            // console.log(operationSequence)
-            // console.log(operationSequence.length)
-            // console.log(boardReturn)
-            // console.log(boardReturn2)
-        }
     }
     if (boardReturn[14] == 1) {
         operator = 1;
