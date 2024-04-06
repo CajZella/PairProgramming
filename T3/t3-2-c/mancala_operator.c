@@ -7,71 +7,118 @@
 #include <stdlib.h>
 
 
-double dfs(int* next_move, int flag, int op, int *status, int depth, int init_score1, int init_score2, double fa) { // flag: 1 for player 1, 2 for player 2
-    // op = 0: max, op = 1: min
-    double weights[4] = {0.8, 0.0, 0.2, 1.0};
-    int depths = 2;
+int next_move = -1;
+int *cur_status;
+int depths = 10;
+int weights[4] = {100, 10, 1};
+int check_skip(int player, int pos) {
+    return pos == 6 && player == 2 || pos == 13 && player == 1;
+}
+int check_eat(int player, int pos) {
+    return cur_status[pos] == 1 && cur_status[12 - pos] > 0 && ((pos >= 0 && pos < 6 && player == 1) || (pos >= 7 && pos < 13 && player == 2));
+}
+int check_end() {
+    int sum1 = 0, sum2 = 0;
+    for (int i = 0; i < 6; i++)
+        sum1 += cur_status[i], sum2 += cur_status[i + 7];
+    if (sum1 == 0) {
+        cur_status[13] += sum2;
+        for (int j = 7; j < 13; j++)
+            cur_status[j] = 0;
+        return 1;
+    }
+    if (sum2 == 0) {
+        cur_status[6] += sum1;
+        for (int j = 0; j < 6; j++)
+            cur_status[j] = 0;
+        return 1;
+    }
+    return 0;
+}
+int calc_feature(int next_player, int *pre_status) { // 求 player1
+    int features;
+    // 得分
+    features = weights[0] * (cur_status[6] - cur_status[13]);
+    // 下一步可能被取走的最大棋子数或者额外回合
+    if (next_player == 1)
+        features += weights[1] * 1;
+    else {
+        int status_cpy[14];
+        memcpy(status_cpy, cur_status, sizeof(status_cpy));
+        int max_taken_stones = 0;
+        for (int i = 7; i < 13; i++) {
+            int pos = i;
+            if (cur_status[pos] == 0) continue;
+            int stones = cur_status[pos]; cur_status[pos] = 0;
+            while (stones > 0) {
+                pos = (pos + 1) % 14;
+                if (check_skip(2, i)) continue;
+                cur_status[pos]++; stones--;
+            }
+            if (check_eat(2, pos) && max_taken_stones < cur_status[12 - pos])
+                max_taken_stones = cur_status[12 - pos];
+            memcpy(cur_status, status_cpy, sizeof(status_cpy));
+        }
+        features -= weights[1] * max_taken_stones;
+    }
+    // 得失棋子数
+    int sum1 = 0, sum1_ = 0;
+    for (int j = 0; j < 6; j++) {
+        sum1 += cur_status[j];
+        sum1_ += pre_status[j];
+    }
+    features += weights[2] * (sum1 - sum1_ + cur_status[6] - pre_status[6]);
+    return features;
+}
+int dfs(int player, int op, int depth, int weight_by_father, int op_by_father) {
     int status_cpy[14];
-    memcpy(status_cpy, status, sizeof(status_cpy));
-    double res = op == 0 ? -1e9 : 1e9;
+    memcpy(status_cpy, cur_status, sizeof(status_cpy));
+    int res = op == 0 ? -1e9 : 1e9;
+    int score_pos = player == 1 ? 6 : 13;
     for (int i = 0; i < 6; i++) {
-        int pos = flag == 1 ? i : i + 7;
-        if (status[pos] == 0) continue;
-        int stones = status[pos]; status[pos] = 0;
+        int pos = player == 1 ? i : i + 7;
+        if (cur_status[pos] == 0) continue;
+        // 模拟落子
+        int stones = cur_status[pos]; cur_status[pos] = 0;
         while (stones > 0) {
             pos = (pos + 1) % 14;
-            if (pos == 6 && flag == 2 || pos == 13 && flag == 1) continue;
-            status[pos]++; stones--;
+            if (check_skip(player, pos)) continue;
+            cur_status[pos]++; stones--;
         }
-        if (status[pos] == 1 && status[12 - pos] > 0 && ((pos >= 1 && pos <= 6 && flag == 1) || (pos >= 8 && pos <= 13 && flag == 2)))
-            status[flag == 1 ? 6 : 13] += status[12 - pos] + 1, status[12 - pos] = status[pos] = 0;
-        int sum1 = 0, sum2 = 0, sum1_ = 0;
-        for (int j = 0; j < 6; j++) {
-            sum1 += status[j];
-            sum2 += status[j + 7];
-            sum1_ += status_cpy[j];
-        }
-        int next_flag = (pos == 6 && flag == 1 || pos == 13 && flag == 2) ? flag : 3 - flag;
-        if (depth + 1 == depths || sum1 == 0 || sum2 == 0) {
-            // calculate the features
-            double features[4];
-            features[0] = status[6] - init_score1 - (status[13] - init_score2);
-            features[1] = sum1 - sum2;
-            features[2] = sum1_ - sum1 + status[6] - init_score1;
-            features[3] = next_flag == flag && flag == 1 ? 100 : (next_flag == flag && flag == 2 ? -100 : 0);
-            // 归一化
-            double sum = 0, target = 0;
-            for (int j = 0; j < 4; j++)
-                features[j] = exp(features[j]), sum += features[j];
-            for (int j = 0; j < 4; j++)
-                features[j] /= sum, target += features[j] * weights[j];
-            if (op == 0) {
-                if (res < target) res = target, *next_move = depth == 0 ? i : *next_move;
-                if (res >= fa) return res;
-            } else {
-                if (res > target) res = target, *next_move = depth == 0 ? i : *next_move;
-                if (res <= fa) return res;
-            }
-            memcpy(status, status_cpy, sizeof(status_cpy));
+        // 判断是否可以吃子
+        if (check_eat(player, pos))
+            cur_status[score_pos] += cur_status[12 - pos] + 1, cur_status[12 - pos] = cur_status[pos] = 0;
+        // 判断游戏是否结束
+        if (check_end()) {
+            int features = weights[0] * (cur_status[6] - cur_status[13]);
+            if (op == 0 && res < features || op == 1 && res > features)
+                res = features, next_move = depth == 0 ? i : next_move;
+            memcpy(cur_status, status_cpy, sizeof(status_cpy));
             continue;
         }
-        if (op == 1) {
-            double t = dfs(next_move, next_flag, flag == next_flag ? 1 : 0, status, depth + 1, init_score1, init_score2, res);
-            memcpy(status, status_cpy, sizeof(status_cpy));
-            if (res > t) res = t, *next_move = depth == 0 ? i : *next_move;
-            if (res <= fa) break;
-        } else {
-            double t = dfs(next_move, next_flag, flag == next_flag ? 0 : 1, status, depth + 1, init_score1, init_score2, res);
-            memcpy(status, status_cpy, sizeof(status_cpy));
-            if (res < t) res = t, *next_move = depth == 0 ? i : *next_move;
-            if (res >= fa) break;
+        // 判断是否额外回合
+        int next_player = (pos == 6 && player == 1 || pos == 13 && player == 2) ? player : 3 - player;
+        // 达到最大深度时求解特征向量
+        if (depth == depths) {
+            int features = calc_feature(next_player, status_cpy);
+            if (op == 0 && res < features || op == 1 && res > features)
+                res = features, next_move = depth == 0 ? i : next_move;
+            memcpy(cur_status, status_cpy, sizeof(status_cpy));
+            continue;
         }
+        // 递归求解
+        int t = dfs(next_player, player == next_player ? op : 1 - op, depth + 1, res, op);
+        memcpy(cur_status, status_cpy, sizeof(status_cpy));
+        if (op == 0 && res < t || op == 1 && res > t)
+            res = t, next_move = depth == 0 ? i : next_move;
+        if (op != op_by_father && (op == 0 && res >= weight_by_father || op == 1 && res <= weight_by_father))
+            break;
     }
     return res;
 }
 int mancala_operator(int flag, int *status) {
-    int next_move = 0;
-    dfs(&next_move, flag, flag == 1 ? 0 : 1, status, 0, status[6], status[13], flag == 1 ? 1e9 : -1e9);
+    cur_status = status;
+    dfs(flag, 1 - flag, 0, flag == 1 ? 1e9 : -1e9, flag);
     return flag * 10 + next_move + 1;
 }
 
