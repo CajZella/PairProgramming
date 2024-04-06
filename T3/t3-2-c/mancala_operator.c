@@ -137,7 +137,7 @@ int mancala_operator(int flag, int *status) {
                 break;
             }
         if (equal) next_move = 5;
-        else dfs(flag, 1 - flag, 0, flag == 1 ? 1e9 : -1e9, flag);
+        else dfs(flag, flag == 1 ? 0 : 1, 0, flag == 1 ? 1e9 : -1e9, flag == 0 ? 0 : 1);
     }
     return flag * 10 + next_move + 1;
 }

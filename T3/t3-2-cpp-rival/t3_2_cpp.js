@@ -12,7 +12,6 @@ function mancalaOperator(flag, status) {
     }
     const ans= cppFuncPtr(flag,paramPtr)
     free(paramPtr);
-    //console.log(ans);
     return ans
 }
 export {mancalaOperator}
