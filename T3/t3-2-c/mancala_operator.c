@@ -120,6 +120,15 @@ int dfs(int player, int op, int depth, int weight_by_father, int op_by_father) {
     return res;
 }
 int mancala_operator(int flag, int *status) {
+    int reverse = flag == 2 ? 1 : 0;
+    if(reverse) {
+        for(int i = 0;i < 7;i++) {
+            int temp = status[i];
+            status[i] = status[i + 7];
+            status[i + 7] = temp;
+        }
+        flag = 1;
+    }
     cur_status = status;
     int equal = 1, jumian1[14] = {4,4,4,4,4,4,0,4,4,4,4,4,4,0};
     for (int i = 0; i < 14; i++)
@@ -139,7 +148,7 @@ int mancala_operator(int flag, int *status) {
         if (equal) next_move = 5;
         else dfs(flag, flag == 1 ? 0 : 1, 0, flag == 1 ? 1e9 : -1e9, flag == 0 ? 0 : 1);
     }
-    return flag * 10 + next_move + 1;
+    return flag * 10 + reverse * 10 + next_move + 1;
 }
 
 void *self_malloc(int len)
