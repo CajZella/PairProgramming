@@ -21,14 +21,12 @@ function mancala_board(flag, seq, size) {
     seq.forEach((value, index) => {
         heap[c_array + index * 4] = value;
     });
-    console.log(seq)
     // 调用导出的函数
     const ret = mancala_board(flag, c_array, size);
     let arr = new Array(15);
     for(let i = 0;i < 15;i++) {
         arr[i] = heap[ret + i * 4];
     }
-    console.log(arr)
     free(c_array)
     free(ret)
     return arr
